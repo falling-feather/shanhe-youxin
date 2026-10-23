@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width,initial-scale=1">
+ <meta name="theme-color" content="#29231f">
+ <meta name="description" content="从一封信出发，在会务工作间、排印桌与临窗试读处之间，经历一页文字的修改、交接与回声。山河有信，文献入戏。">
+ <title>山河有信 · 纸上的接力</title>
+ <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+ <link rel="stylesheet" href="style.css">
+ <link rel="stylesheet" href="paper-layout.css">
+ <script type="module" src="app.mjs"></script>
+</head>
+<body>
+ <a class="skip-link" href="#scene-title">跳到当前叙事</a>
+ <div id="world" class="paper-world" data-kind="cover" data-scene="desk" data-tone="dark">
+  <div class="scene-art" aria-hidden="true"><img id="scene-background" src="assets/scenes/desk-v2.png" width="1672" height="941" alt="" fetchpriority="high"></div>
+  <div class="scene-wash" aria-hidden="true"></div>
+  <div class="paper-dust" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+  <header class="world-header">
+   <button class="brand" type="button" data-action="menu" aria-label="山河有信，旅程与设置">山河有信<span>文 献 入 戏</span></button>
+   <nav aria-label="随身物件"><button type="button" data-action="journal">手记<span class="nav-shortcut">J</span></button><button type="button" data-action="library">来处<span class="nav-shortcut">L</span></button><button id="sound-toggle" type="button" data-action="sound" aria-pressed="false">声音 · 关</button><button class="menu-dot" type="button" data-action="menu" aria-label="存档与设置">⋯</button></nav>
+  </header>
+  <div class="scene-location"><span id="act-label"></span><span id="place-label"></span></div>
+  <div id="stage" class="object-stage" aria-label="眼前的物件"></div>
+  <div id="hotspots" class="scene-hotspots" role="group" aria-label="场景中的人物与去处"></div>
+  <figure id="portrait" class="character-portrait" hidden><img id="character-image" alt=""><figcaption id="character-caption"></figcaption></figure>
+  <main id="paper-copy" class="paper-copy">
+   <div class="copy-heading"><p id="scene-kicker" class="scene-kicker"></p><h1 id="scene-title" tabindex="-1"></h1><p id="scene-subtitle" class="scene-subtitle" hidden></p><p id="speaker" class="speaker" hidden></p></div>
+   <div id="page-scroll" class="page-scroll" tabindex="0" role="region" aria-label="当前叙事正文"><div id="page-content"></div></div>
+   <nav id="paper-pagination" class="paper-pagination" aria-label="当前正文翻页"></nav>
+   <div id="story-actions" class="story-actions" aria-label="接下来的行动"></div>
+  </main>
+  <div id="carried-bar" class="carried-bar" hidden><button id="carried-line" type="button" data-action="journal"></button><button id="present-carried" type="button" data-action="present-carried" hidden></button></div>
+  <footer class="world-bottom"><button id="hint-button" type="button" data-action="hint" hidden>停在这里了？</button><div id="scene-sources"></div><span id="local-status">本机存档</span></footer>
+  <p id="ink-whisper" class="ink-whisper" role="status" hidden></p>
+ </div>
+ <div id="announcer" class="sr-only" aria-live="polite"></div>
+ <dialog id="journal-dialog" class="paper-dialog">
+  <div class="dialog-heading"><div><p class="eyebrow">随身手记</p><h2>经历过的，和还想问的</h2></div><button class="close" type="button" data-close aria-label="合上手记">×</button></div>
+  <div class="dialog-tabs" role="tablist" aria-label="手记内容"><button type="button" data-journal-tab="clues" role="tab">线索</button><button type="button" data-journal-tab="people" role="tab">遇见的人</button><button type="button" data-journal-tab="pages" role="tab">经历</button><button type="button" data-journal-tab="letter" role="tab">我的纸页</button><button type="button" data-journal-tab="legacy" role="tab" id="legacy-tab" hidden>旧版文字</button></div>
+  <div id="journal-content" class="dialog-scroll"></div>
+  <div class="dialog-foot"><button class="ink-link" type="button" data-action="export-letter">带走我的纸页 ↓</button><button class="ink-link" type="button" data-action="export-save">导出旅程</button></div>
+ </dialog>
+ <dialog id="library-dialog" class="paper-dialog">
+  <div class="dialog-heading"><div><p class="eyebrow">每份纸，都有自己的来处</p><h2>文献与创作索引</h2></div><button class="close" type="button" data-close aria-label="合上索引">×</button></div>
+  <div class="library-search"><label><span class="sr-only">检索资料</span><input id="source-search" type="search" placeholder="名字、刊物、年代或材料" autocomplete="off"></label><button type="button" id="only-bookmarked" data-action="filter-bookmarks" aria-pressed="false">只看收藏</button></div>
+  <div id="library-list" class="library-list dialog-scroll"></div><p class="dialog-footnote">历史原页按原站公开规格加载。插画、演绎物件和现代试样分别说明，不替代原件。</p>
+ </dialog>
+ <dialog id="reader-dialog" class="reader-dialog"><div class="dialog-heading"><div><p class="eyebrow">把原页、题名与出处放在一起</p><h2 id="reader-title"></h2></div><button class="close" type="button" data-close aria-label="收好这份资料">×</button></div><div id="reader-content" class="reader-content dialog-scroll"></div></dialog>
+ <dialog id="map-dialog" class="map-dialog"><div class="dialog-heading"><div><p class="eyebrow">1927 底本 · 1945 年修订</p><h2>河流与图边，都可以读</h2></div><button class="close" type="button" data-close aria-label="折起地图">×</button></div><div id="map-surface"></div></dialog>
+ <dialog id="menu-dialog" class="paper-dialog menu-dialog">
+  <div class="dialog-heading"><div><p class="eyebrow">山河有信 · 纸上的接力</p><h2>可以停下，也可以接着读</h2></div><button class="close" type="button" data-close aria-label="回到故事">×</button></div>
+  <div class="dialog-scroll menu-copy">
+   <p id="save-status" role="status"></p><p id="storage-warning" class="storage-warning" hidden></p>
+   <div class="save-actions"><button class="ink-link" type="button" data-action="export-save">导出旅程 ↓</button><button class="ink-link" type="button" data-action="import-save">导入旅程 ↑</button><button class="ink-link" type="button" id="export-old" data-action="export-legacy" hidden>带走旧版原始记录</button><button class="ink-link" type="button" id="export-raw" data-action="export-raw" hidden>保留未载入的原记录</button></div>
+   <h3>让纸上的人说完</h3><p>点场景中的物件与去处，与人物交谈；取得的线索可以在当前人物面前出示。排印桌上的选择会改变试样与后续回应。没有倒计时，也不为情感评分。</p>
+   <p>手记里的经历只供回看。回看时不能重选旧决定，回到现在可继续旅程。J 打开手记，L 打开来处；输入文字时快捷键不触发。</p>
+   <div class="save-actions"><button class="ink-link" type="button" id="font-toggle" data-action="font" aria-pressed="false">较大字号</button><button class="ink-link" type="button" data-action="fullscreen">全屏进入</button></div>
+   <h3>真实材料与演绎</h3><p>背景为 1938 年武汉文协的文化抗战。林青、陈师傅、周禾与玩家委托、试样、对白、交接和回声均为虚构演绎。史实、原页与短引语另有明确出处，不改变历史人物的实际行程和结局。</p>
+   <p>原信为研究转引的现代排印；地图为后期修订图。插画为 AI 辅助的当代重构，声音为现代程序音景。它们都不是历史影像或录音。原刊与照片正式公开使用的范围仍待确认。</p>
+   <h3>你的文字留在哪里</h3><p>本机保存，不上传，不调用在线生成对白。导出的旅程含你写的文字。旧版收藏与个人文字保留，重构后的故事从新的一页开始；旧原始记录可单独导出。</p>
+   <p>当前为完整故事的本地制作版。程序验证不代替真人时长、理解与共鸣、专业文史审读或竞赛评审。</p>
+   <button class="ink-link danger" type="button" data-action="ask-reset">从灯下，重新开始</button>
+  </div>
+ </dialog>
+ <dialog id="import-dialog" class="small-dialog"><h2>接上这段旅程？</h2><p id="import-summary"></p><p>确认后替换当前旅程。可先导出当前记录。</p><div class="save-actions"><button class="ink-link" type="button" data-action="export-save">先导出</button><button class="ink-link" type="button" data-close>暂不采用</button><button class="ink-link strong" type="button" data-action="confirm-import">接着读 →</button></div></dialog>
+ <dialog id="reset-dialog" class="small-dialog"><h2>从灯下，重新开始？</h2><p></p><div class="save-actions"><button class="ink-link" type="button" data-action="export-save">先导出</button><button class="ink-link" type="button" data-close>继续这段旅程</button><button class="ink-link danger" type="button" data-action="reset">重新开始 →</button></div></dialog>
+ <input id="import-file" type="file" accept="application/json,.json" hidden>
+ <dialog id="actions-dialog" class="small-dialog"><div class="dialog-heading"><h2>还可以这样做</h2><button class="close" type="button" data-close aria-label="回到纸页">×</button></div><div id="extra-actions" class="extra-actions"></div></dialog>
+ <dialog id="writing-dialog" class="paper-dialog"><div class="dialog-heading"><div><p class="eyebrow">你的当代书写 · 本机保存</p><h2 id="writing-title"></h2></div><button class="close" type="button" data-close aria-label="收好自己的纸页">×</button></div><div class="dialog-scroll"><label for="writing-text" class="paper-input-label">可以留白，不计分</label><textarea id="writing-text" class="paper-input" rows="9" maxlength="2000"></textarea></div><div class="dialog-foot"><button type="button" class="ink-link" data-close>收好，回到经历中 →</button></div></dialog>
+ <dialog id="comparison-dialog" class="paper-dialog"><div class="dialog-heading"><div><p class="eyebrow">当代试样 · 实际取样快照</p><h2>你怎样把听见的话写回来</h2></div><button class="close" type="button" data-close aria-label="收起稿件对照">×</button></div><div id="comparison-content" class="dialog-scroll"></div></dialog>
+</body>
+</html>

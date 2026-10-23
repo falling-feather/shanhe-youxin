@@ -1,0 +1,9 @@
+{
+  "name": "shanhe-youxin-prototype",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/preview.mjs",
+    "test": "node --test tests/*.test.mjs"
+  }
+}
